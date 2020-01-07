@@ -4,8 +4,14 @@
 </head>
 <body>
   <script type="text/javascript">
-    new window.Notification('Pending Notifications');
-  const { ipcRenderer } = require('electron');
+  const { ipcRenderer, ipcMain } = require('electron');
+
+  new Notification('test');
+  
+  ipcRenderer.on('notification', (event, arg) => {
+    new window.Notification('Pending Notifications', arg);
+  })
+  
     // ipcRenderer.send('asynchronous-message', 'ping')
   window.ymConfig = { bot: 'x1571117099858', channel: 'electron', 'ipcRenderer': ipcRenderer }; (function () { var w = window, ic = w.YellowMessenger; if ("function" === typeof ic) ic("reattach_activator"), ic("update", ymConfig); else { var d = document, i = function () { i.c(arguments) }; function l() { var e = d.createElement("script"); e.type = "text/javascript", e.async = !0, e.src = "http://127.0.0.1:8080/mobile.js"; var t = d.getElementsByTagName("script")[0]; t.parentNode.insertBefore(e, t) } i.q = [], i.c = function (e) { i.q.push(e) }, w.YellowMessenger = i, w.attachEvent ? w.attachEvent("onload", l) : w.addEventListener("load", l, !1) } })();
 </script>

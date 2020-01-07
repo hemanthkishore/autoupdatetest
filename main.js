@@ -52,7 +52,10 @@ ipcMain.on('restart_app', () => {
 });
 
 // Receive the message from the chat plugin
-ipcMain.on('asynchronous-message', (event, arg) => {
+ipcMain.on('electron-notification', (event, arg) => {
+
+  // Write custome logic
+  console.log(event)
   console.log(arg) // prints "ping"
   // event.reply('asynchronous-reply', 'pong')
   let notification = arg;
@@ -61,6 +64,10 @@ ipcMain.on('asynchronous-message', (event, arg) => {
       requireInteraction: true,
       sticky: true
   };
+
+  event.reply('notification', options);
+  event.reply('notification', options);
+  event.reply('notification', options);
 
   //Send the Notification
   // let myNotification = new window.Notification('Pending Notifications', options);
