@@ -1,76 +1,115 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const { autoUpdater } = require('electron-updater');
+const path = require('path');
 
 let mainWindow;
 
-function createWindow () {
-  mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      nodeIntegration: true,
-    },
-  });
-  mainWindow.loadFile('index.html');
-  mainWindow.webContents.openDevTools()
-  mainWindow.on('closed', function () {
-    mainWindow = null;
-  });
+function createWindow() {
+    mainWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+            nodeIntegration: true,
+        },
+    });
+    mainWindow.loadFile('index.html');
+    mainWindow.webContents.openDevTools()
+    mainWindow.on('closed', function () {
+        mainWindow = null;
+    });
 }
 
 app.on('ready', () => {
-  createWindow();
-  autoUpdater.checkForUpdatesAndNotify();
+    createWindow();
+    autoUpdater.checkForUpdatesAndNotify();
+
+    // Recet the badgeCount
+    app.setBadgeCount(0);
+
 });
 
 app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
 });
 
 app.on('activate', function () {
-  if (mainWindow === null) {
-    createWindow();
-  }
+    if (mainWindow === null) {
+        createWindow();
+    }
 });
 
 ipcMain.on('app_version', (event) => {
-  event.sender.send('app_version', { version: app.getVersion() });
+    event.sender.send('app_version', { version: app.getVersion() });
 });
 
 autoUpdater.on('update-available', () => {
-  mainWindow.webContents.send('update_available');
+    mainWindow.webContents.send('update_available');
 });
 
 autoUpdater.on('update-downloaded', () => {
-  mainWindow.webContents.send('update_downloaded');
+    mainWindow.webContents.send('update_downloaded');
 });
 
 ipcMain.on('restart_app', () => {
-  autoUpdater.quitAndInstall();
+    autoUpdater.quitAndInstall();
 });
 
 // Receive the message from the chat plugin
 ipcMain.on('electron-notification', (event, arg) => {
 
-  // Write custome logic
-  console.log(event)
-  console.log(arg) // prints "ping"
-  // event.reply('asynchronous-reply', 'pong')
-  let notification = arg;
-  let options = {
-      body: `You have ${notification.length == undefined ? 1 : notification.length} pending Notifications`,
-      requireInteraction: true,
-      sticky: true
-  };
+    let notification = arg;
+    let birthdayNotification = [];
+    let aniversaryNotification = [];
 
-  event.reply('notification', options);
-  event.reply('notification', options);
-  event.reply('notification', options);
+    // Check if the app is minimized and increment the badge count
+    if (mainWindow.isMinimized()) {
+        app.setBadgeCount(notification.length);
+    }
 
-  //Send the Notification
-  // let myNotification = new window.Notification('Pending Notifications', options);
+    notification.forEach(element => {
+        if (element.title == 'aniversary')
+            aniversaryNotification.push(element);
+        else if (element.title == 'birthday')
+            birthdayNotification.push(element);
+    });
+
+    if (birthdayNotification.length > 0) {
+        console.log(birthdayNotification[0].body.from.name)
+        let body;
+        if (birthdayNotification.length == 1) {
+            body = `${birthdayNotification[0].body.from.name} has birthday today`;
+        } else if (birthdayNotification.length == 2) {
+            body = `${birthdayNotification[0].body.from.name} and ${birthdayNotification[1].body.from.name} have birthday today`;
+        } else {
+            body = `${birthdayNotification[0].body.from.name} , ${birthdayNotification[1].body.from.name} and ${birthdayNotification.length - 2} others have birthday today`;
+        }
+
+        let options = {
+            body: body
+        }
+        event.reply('birthday-notification', options);
+    }
+
+    if (aniversaryNotification.length > 0) {
+        let body;
+        if (aniversaryNotification.length == 1) {
+            body = `${aniversaryNotification[0].body.from.name} has aniversary today`;
+        } else if (aniversaryNotification.length == 2) {
+            body = `${aniversaryNotification[0].body.from.name} and ${aniversaryNotification[1].body.from.name} have aniversary today`;
+        } else {
+            body = `${aniversaryNotification[0].body.from.name} , ${aniversaryNotification[1].body.from.name} and ${aniversaryNotification.length - 2} others have aniversary today`;
+        }
+
+        let options = {
+            body: body
+        }
+
+        setTimeout(() => {
+            event.reply('aniversary-notification', options);
+        }, 10000)
+    }
 })
 
 
