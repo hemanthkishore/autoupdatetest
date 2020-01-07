@@ -50,3 +50,20 @@ autoUpdater.on('update-downloaded', () => {
 ipcMain.on('restart_app', () => {
   autoUpdater.quitAndInstall();
 });
+
+// Receive the message from the chat plugin
+ipcMain.on('asynchronous-message', (event, arg) => {
+  console.log(arg) // prints "ping"
+  // event.reply('asynchronous-reply', 'pong')
+  let notification = arg;
+  let options = {
+      body: `You have ${notification.length == undefined ? 1 : notification.length} pending Notifications`,
+      requireInteraction: true,
+      sticky: true
+  };
+
+  //Send the Notification
+  // let myNotification = new window.Notification('Pending Notifications', options);
+})
+
+
