@@ -12,16 +12,23 @@
             let myNotitication = new window.Notification('Birthday', arg);
             myNotitication.addEventListener("click", function (event) {
                 event.preventDefault();
+                ipcRenderer.send('open-app', 'open');
             })
         })
 
         ipcRenderer.on('aniversary-notification', (event, arg) => {
             let myNotitication = new window.Notification('Aniversary', arg);
             myNotitication.addEventListener("click", function (event) {
+                ipcRenderer.send('open-app', 'open');
                 event.preventDefault();
             })
         })
-
-        window.ymConfig = { bot: 'x1571117099858', channel: 'electron', 'ipcRenderer': ipcRenderer }; (function () { var w = window, ic = w.YellowMessenger; if ("function" === typeof ic) ic("reattach_activator"), ic("update", ymConfig); else { var d = document, i = function () { i.c(arguments) }; function l() { var e = d.createElement("script"); e.type = "text/javascript", e.async = !0, e.src = "http://127.0.0.1:8080/mobile.js"; var t = d.getElementsByTagName("script")[0]; t.parentNode.insertBefore(e, t) } i.q = [], i.c = function (e) { i.q.push(e) }, w.YellowMessenger = i, w.attachEvent ? w.attachEvent("onload", l) : w.addEventListener("load", l, !1) } })();
+        // var src = "http://127.0.0.1:8080/mobile.js"
+        // var src = "https://app.yellowmessenger.com/widget/mobile.js"
+        var src = "https://amy.mydrreddys.com/widget/mobile.js"
+        // x1568177280475
+        // x1571117099858
+        // , host: 'https://amy.mydrreddys.com'
+        window.ymConfig = { bot: 'x1568177280475', channel: 'electron', 'ipcRenderer': ipcRenderer }; (function () { var w = window, ic = w.YellowMessenger; if ("function" === typeof ic) ic("reattach_activator"), ic("update", ymConfig); else { var d = document, i = function () { i.c(arguments) }; function l() { var e = d.createElement("script"); e.type = "text/javascript", e.async = !0, e.src = src; var t = d.getElementsByTagName("script")[0]; t.parentNode.insertBefore(e, t) } i.q = [], i.c = function (e) { i.q.push(e) }, w.YellowMessenger = i, w.attachEvent ? w.attachEvent("onload", l) : w.addEventListener("load", l, !1) } })();
     </script>
 </body>

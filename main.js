@@ -22,10 +22,6 @@ function createWindow() {
 app.on('ready', () => {
     createWindow();
     autoUpdater.checkForUpdatesAndNotify();
-
-    // Recet the badgeCount
-    app.setBadgeCount(0);
-
 });
 
 app.on('window-all-closed', function () {
@@ -38,26 +34,14 @@ app.on('activate', function () {
     if (mainWindow === null) {
         createWindow();
     }
-});
-
-ipcMain.on('app_version', (event) => {
-    event.sender.send('app_version', { version: app.getVersion() });
-});
-
-autoUpdater.on('update-available', () => {
-    mainWindow.webContents.send('update_available');
-});
-
-autoUpdater.on('update-downloaded', () => {
-    mainWindow.webContents.send('update_downloaded');
-});
-
-ipcMain.on('restart_app', () => {
-    autoUpdater.quitAndInstall();
+    // reset the badge count when app is opeaned
+    app.setBadgeCount(0);
 });
 
 // Receive the message from the chat plugin
 ipcMain.on('electron-notification', (event, arg) => {
+
+    console.log(arg, "Args");
 
     let notification = arg;
     let birthdayNotification = [];
@@ -69,6 +53,11 @@ ipcMain.on('electron-notification', (event, arg) => {
     }
 
     notification.forEach(element => {
+        try {
+            element = JSON.parse(element);
+        } catch (error) {
+            // Do Nothing
+        }
         if (element.title == 'aniversary')
             aniversaryNotification.push(element);
         else if (element.title == 'birthday')
@@ -108,8 +97,14 @@ ipcMain.on('electron-notification', (event, arg) => {
 
         setTimeout(() => {
             event.reply('aniversary-notification', options);
-        }, 10000)
+        }, 5000)
     }
-})
+});
 
+// Open the app if user clicks the notification
+ipcMain.on('open-app', (event, arg) => {
+    console.log('inside open-app');
+    mainWindow.show();
+    app.setBadgeCount(0);
+});
 

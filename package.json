@@ -10,7 +10,37 @@
   "scripts": {
     "start": "electron .",
     "build": "electron-builder build --mac --publish never",
-    "deploy": "electron-builder build --mac --publish always"
+    "deploy": "electron-builder build --mac --publish always",
+    "postinstall": "electron-builder install-app-deps",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder -mw"
+  },
+  "build": {
+    "appId": "com.amy.mydrreddys",
+    "productName": "Amy",
+    "copyright": "Copyright © Bitonic Technology Labs, Inc. Silverside road, Wilmington, Delaware 02139.",
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "build/amy.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": false,
+      "runAfterFinish": true
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.utilities",
+      "icon": "build/amy.icns"
+    },
+    "dmg": {
+      "title": "AMY"
+    }
   },
   "author": "",
   "license": "ISC",
